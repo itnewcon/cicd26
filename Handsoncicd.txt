@@ -1,0 +1,763 @@
+CICD for Data Engineering
+
+1. Learning Objectives
+
+By the end of this session, you will be able to:
+
+    Understand CI/CD
+    Understand why Data Engineers use CI/CD
+    Install and verify Git
+    Create a Git repository
+    Connect Git to GitHub
+    Create branches
+    Commit code
+    Push code to GitHub
+    Create automated Python tests
+    Run tests locally
+    Create a GitHub Actions CI pipeline
+    Automatically run tests when code is pushed
+    Understand deployment
+    Simulate a Data Engineering deployment
+    Understand Blue-Green deployment
+    Understand the complete DevOps flow for Data Engineering
+
+
+Part 1 – What is CI/CD?
+    Let's first understand the problem.
+
+    Imagine a company has the following Data Engineering code:
+        ETL Scripts
+        SQL Files
+        Airflow DAGs
+        Spark Jobs
+        Python Transformations
+        Configuration Files
+
+    For example:
+
+        data-engineering-project/
+        │
+        ├── etl/
+        │   ├── extract.py
+        │   └── transform.py
+        │
+        ├── sql/
+        │   ├── employees.sql
+        │   └── sales.sql
+        │
+        ├── dags/
+        │   └── daily_pipeline.py
+        │
+        ├── spark/
+        │   └── sales_job.py
+        │
+        └── tests/
+            └── test_etl.py
+
+    Suppose a developer changes an ETL script directly on the production server.
+
+They make a mistake.
+
+    For example:
+        print("Processing customer data")
+
+    becomes:
+        print("Processing customer data"
+
+    There is a missing ).
+
+    The production pipeline breaks
+
+Problems with the old approach
+
+    Without CI/CD:
+
+        Developer writes code
+                ↓
+        Copy code to server
+                ↓
+        Run manually
+                ↓
+        Something breaks
+                ↓
+        Try to fix manually
+
+    Problems:
+
+        No proper version history
+        Difficult rollback
+        Manual deployment
+        No automated testing
+        Human errors
+        Team members can overwrite each other's work
+        Production can break
+        Difficult to identify who changed what
+
+Part 2 – What is CI?
+
+    CI means:
+        Continuous Integration
+
+    The basic idea is:
+        Whenever developers make changes to code, the system automatically 
+        checks the code.
+
+    For example:
+
+        Developer changes code
+                ↓
+        Push code to GitHub
+                ↓
+        CI pipeline starts
+                ↓
+        Install dependencies
+                ↓
+        Run tests
+                ↓
+        Validate code
+                ↓
+        PASS / FAIL
+
+    For Data Engineering, CI can test:
+
+        Python ETL code
+        SQL
+        Airflow DAGs
+        PySpark code
+        Data transformations
+        Configuration files
+
+
+Part 3 – What is CD?
+
+    CD can mean:
+        Continuous Delivery
+
+    or
+        Continuous Deployment
+
+    The important idea is that after the code passes validation, it can be prepared or deployed to another environment.
+
+    For example:
+
+        Developer
+            ↓
+        Git
+            ↓
+        CI
+            ↓
+        Tests
+            ↓
+        Validation
+            ↓
+        Deployment
+            ↓
+        Airflow / Spark / Data Platform
+
+
+Part 3 – What is CD?
+    CD can mean:
+        Continuous Delivery
+
+    or
+        Continuous Deployment
+
+    The important idea is that after the code passes validation, 
+    it can be prepared or deployed to another environment.
+
+    For example:
+
+        Developer
+            ↓
+        Git
+            ↓
+        CI
+            ↓
+        Tests
+            ↓
+        Validation
+            ↓
+        Deployment
+            ↓
+        Airflow / Spark / Data Platform
+
+Part 4 – Complete CI/CD Flow
+
+    Keep this diagram in mind throughout the session.
+
+        Developer
+            |
+            | Write code
+            ↓
+        Local Git
+            |
+            | git add
+            | git commit
+            ↓
+        GitHub
+            |
+            | git push
+            ↓
+        CI Pipeline
+            |
+            ├── Install dependencies
+            |
+            ├── Run tests
+            |
+            ├── Validate code
+            |
+            └── Build
+                |
+                ↓
+            PASS
+                |
+                ↓
+            Deployment
+                |
+                ↓
+        Airflow / Spark / ETL
+
+Part 5 – Why Data Engineers Need Git
+    Git is a version control system.
+    It tracks changes to your files.
+
+    Data Engineers commonly use Git for:
+        Python ETL scripts
+        SQL files
+        Airflow DAGs
+        PySpark jobs
+        Configuration files
+        Data quality tests
+        Deployment scripts
+
+    Git provides:
+        1. Version history
+        You can see what changed.
+
+        2. Collaboration
+        Multiple developers can work on the same project.
+
+        3. Rollback
+        You can return to an earlier version.
+
+        4. Branching
+        Developers can work on separate features.
+
+Part 6 – Create GitHub Account
+
+    Open your browser.
+
+    Go to:
+        GitHub
+
+    If you already have an account, simply sign in.
+
+    If you don't:
+
+        Click Sign up
+        Enter your email
+        Create a password
+        Choose a username
+        Complete verification
+        Sign in
+
+Part 7 – Install Git on Windows
+    Open your browser.
+    Go to the official Git website:
+        Git official website
+    Download Git for Windows.
+    Run the installer.
+    For this session, you can normally keep the default options.
+
+    Click:
+
+        Next
+        Next
+        Next
+        ...
+        Install
+
+    After installation, restart VS Code if it was already open.
+
+Part 8 – Verify Git Installation
+    Open VS Code.
+
+    Open:
+        Terminal → New Terminal
+
+    You should see a terminal at the bottom.
+
+    Type:
+        > git --version
+
+    Press Enter.
+
+    You should get something similar to:
+        git version 2.x.x
+
+    The exact version may be different.
+    If you see a Git version, Git is installed correctly.
+
+Part 9 – Configure Git
+    Before creating commits, configure your name and email.
+
+    In VS Code terminal, type:
+        > git config --global user.name "Your Name"
+
+    Example:
+        > git config --global user.name "Yuvan"
+
+    Now configure your email:
+        > git config --global user.email "your-email@example.com"
+
+    Use the email associated with your GitHub account.
+
+    Check your configuration:
+        > git config --global user.name
+
+    Then:
+        > git config --global user.email
+
+    You should see your configured values.
+
+Part 10 – Create Our Data Engineering Project
+    We are going to create: session37
+    Step 1 – Create folder
+        On your Windows desktop:
+            Right-click → New → Folder
+
+        Name it:
+            session37
+
+    Step 2 – Open folder in VS Code
+        Open VS Code.
+
+        Select:
+            File → Open Folder
+
+        Select:
+            session37
+
+        Click:
+            Select Folder
+
+        You should now see:
+            session37
+
+        in the Explorer panel.
+
+
+Part 11 – Create First ETL File
+    In VS Code Explorer:
+        Right-click session37.
+
+    Select:
+        New File
+
+    Name it:
+        etl.py
+
+    Add:
+        def extract_data():
+            print("Extracting data")
+
+
+        def transform_data():
+            print("Transforming data")
+
+
+        def load_data():
+            print("Loading data")
+
+
+        if __name__ == "__main__":
+            extract_data()
+            transform_data()
+            load_data()
+
+    Save:
+        Ctrl + S
+
+Part 12 – Run the ETL Program
+
+    Open VS Code terminal.
+    Make sure you are inside the session37 folder.
+
+    Run:
+        python etl.py
+
+    Expected output:
+        Extracting data
+        Transforming data
+        Loading data
+
+    Congratulations.
+
+        You have your first small Data Engineering application.
+
+Part 13 – Initialize Git
+    In the VS Code terminal:
+        > git init
+
+    You should see something similar to:
+
+    Initialized empty Git repository
+
+    This creates a hidden:
+        .git
+
+    folder.
+
+    You normally don't need to modify this folder manually.
+
+Part 14 – Check Git Status
+    Run:
+        > git status
+
+    You should see something similar to:
+
+    Untracked files:
+        etl.py
+    What does "untracked" mean?
+
+    Git sees the file, but Git is not currently tracking it.
+
+Part 15 – Add the File
+    Run:
+        > git add etl.py
+
+    Now run:
+        > git status
+
+    You should see:
+
+        Changes to be committed:
+            new file: etl.py
+
+    This means Git has placed the file in the staging area.
+
+
+Part 16 – Commit the File
+    Run:
+        > git commit -m "Initial ETL code"
+
+    You should see something similar to:
+
+    1 file changed
+
+    Your first Git commit is complete.
+
+    Understand Git's Three Important Areas
+
+    This is extremely important.
+
+        Working Directory
+            ↓
+            git add
+            ↓
+        Staging Area
+            ↓
+        git commit
+            ↓
+        Git Repository
+
+        For example:
+
+        Create etl.py
+            ↓
+        git add etl.py
+            ↓
+        git commit -m "Initial ETL code"
+
+Part 17 – Create Another File
+    Create:
+        etl2.py
+
+    Add:
+        print("Second ETL process")
+
+    Save it.
+
+    Now:
+        > git status
+
+    You should see:
+        etl2.py
+
+    as untracked.
+
+Part 18 – Add and Commit
+    Run:
+        > git add etl2.py
+
+    Then:
+        > git commit -m "Added second ETL script"
+
+    Now check:
+        > git status
+
+    You should ideally see:
+        nothing to commit, working tree clean
+
+Part 19 – What Does git add . Mean?
+    Instead of:
+        > git add etl.py
+
+    you can use:
+        git add .
+
+    The . means:
+        Add changes from the current directory.
+
+    Typical workflow:
+        > git add .
+        > git commit -m "Updated ETL code"
+
+Part 20 – View Commit History
+    Run:
+        > git log
+
+    You will see your commits.
+
+    For example:
+        commit abc123
+        Author: Yuvan
+        Message: Added second ETL script
+
+        commit xyz456
+        Author: Yuvan
+        Message: Initial ETL code
+
+    You have now created version history.
+
+Part 21 – Create GitHub Repository
+    Now we will connect our local Git repository to GitHub.
+
+    Go to:
+        GitHub
+        Sign in.
+
+    Click:
+        +
+
+    Then:
+        New repository
+
+    Enter:
+        session37-ci-cd
+
+    Choose:
+        Public
+
+    or
+        Private
+
+    For a training project, either is fine.
+
+    Important
+
+    When creating the repository, for this exercise do not initialize it with:
+        README
+        .gitignore
+        License
+
+    Leave them unchecked.
+
+    Click:
+        Create repository
+
+Part 22 – Connect Local Git to GitHub
+
+    GitHub will show commands.        
+        git init
+        git add .
+        git commit -m "first commit"
+        git branch -M main
+        git remote add origin https://github.com/itnewcon/cicd26.git
+        git push -u origin main
+
+    You can use the repository URL provided by GitHub.
+
+    It will look similar to:
+        https://github.com/itnewcon/cicd26.git
+
+    In your VS Code terminal, run:
+        > git remote add origin https://github.com/itnewcon/cicd26.git
+
+    Replace:
+        YOUR_USERNAME
+        with your GitHub username.
+
+Part 23 – Verify Remote
+    Run:
+        > git remote -v
+
+    You should see your GitHub repository URL.
+
+    For example:
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git remote add origin https://github.com/itnewcon/cicd26.git
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git remote -v                                               
+        origin  https://github.com/itnewcon/cicd26.git (fetch)
+        origin  https://github.com/itnewcon/cicd26.git (push)
+
+Part 24 – Rename Branch to Main
+    Run:
+        > git branch -M main
+
+    Check:
+
+        > git branch
+
+    You should see:
+
+        * main
+
+    The * means the current branch.
+
+    Example:
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git branch
+            * master
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git branch -M main
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git branch        
+            * main
+
+Part 25 – Push Code to GitHub
+
+    Run:
+        > git init
+        > git add .
+        > git commit -m "first commit"
+        > git branch -M main
+        > git remote add origin https://github.com/itnewcon/cicd26.git
+        > git push -u origin main
+
+    The first push may ask you to authenticate with GitHub.
+    After successful authentication, your code will be uploaded.
+    Go to your GitHub repository in the browser.
+    Refresh the page.
+
+    You should see:
+        etl.py
+        etl2.py
+
+    Congratulations.
+
+    You have completed:
+
+        Local Git
+            ↓
+        GitHub
+
+Part 26 – Git Workflow
+
+    The basic Git workflow is:
+
+    Create / Modify file
+            ↓
+    git status
+            ↓
+    git add .
+            ↓
+    git commit -m "message"
+            ↓
+    git push
+
+    Remember this workflow.
+
+Part 27 – Understanding Branches
+
+    A branch is a separate working area for your code.
+
+    Suppose production currently has:
+
+    main
+
+    You want to create a new ETL transformation.
+
+    Instead of modifying production code directly:
+
+    main
+
+    create:
+
+    feature-transform
+
+    Then work there.
+
+Part 28 – Create Feature Branch
+
+    Run:
+
+    git checkout -b feature-transform
+
+    Check:
+
+    git branch
+
+    You should see:
+
+    * feature-transform
+    main
+
+    The * tells you which branch you are currently using.
+
+Part 29 – Modify ETL Code
+
+    Open:
+
+    etl.py
+
+    Change:
+
+    def transform_data():
+        print("Transforming data")
+
+    to:
+
+    def transform_data():
+        print("Transforming customer data")
+
+    Save the file.
+
+    Run:
+
+    python etl.py
+
+    You should see:
+
+    Extracting data
+    Transforming customer data
+    Loading data
+
+Part 30 – Commit Feature
+
+    Run:
+
+    git status
+
+    Then:
+
+    git add .
+
+    Then:
+
+    git commit -m "Added customer transformation"
+
+    Now push the branch:
+
+    git push -u origin feature-transform
+
+    Go to GitHub.
+
+    You should now see the new branch.
+
+
+
+
+
+
+
+
+
+
+
