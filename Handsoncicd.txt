@@ -652,15 +652,15 @@ Part 26 – Git Workflow
 
     The basic Git workflow is:
 
-    Create / Modify file
-            ↓
-    git status
-            ↓
-    git add .
-            ↓
-    git commit -m "message"
-            ↓
-    git push
+        Create / Modify file
+                ↓
+        git status
+                ↓
+        git add .
+                ↓
+        git commit -m "message"
+                ↓
+        git push
 
     Remember this workflow.
 
@@ -669,18 +669,16 @@ Part 27 – Understanding Branches
     A branch is a separate working area for your code.
 
     Suppose production currently has:
-
-    main
+        main
 
     You want to create a new ETL transformation.
 
     Instead of modifying production code directly:
 
-    main
+        main
 
     create:
-
-    feature-transform
+        feature-transform
 
     Then work there.
 
@@ -688,16 +686,18 @@ Part 28 – Create Feature Branch
 
     Run:
 
-    git checkout -b feature-transform
+        > git checkout -b feature-transform
 
     Check:
 
-    git branch
+        > git branch
 
     You should see:
-
-    * feature-transform
-    main
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git checkout -b feature-transform
+        Switched to a new branch 'feature-transform'
+        PS C:\vat\SW\AtoZ\A-DE\M8-CICD\S37\myprjcicd> git branch
+        * feature-transform
+        main
 
     The * tells you which branch you are currently using.
 
@@ -705,7 +705,7 @@ Part 29 – Modify ETL Code
 
     Open:
 
-    etl.py
+        etl2.py
 
     Change:
 
@@ -720,8 +720,7 @@ Part 29 – Modify ETL Code
     Save the file.
 
     Run:
-
-    python etl.py
+        python etl2.py
 
     You should see:
 
