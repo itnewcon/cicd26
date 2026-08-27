@@ -704,7 +704,6 @@ Part 28 – Create Feature Branch
 Part 29 – Modify ETL Code
 
     Open:
-
         etl2.py
 
     Change:
@@ -720,37 +719,69 @@ Part 29 – Modify ETL Code
     Save the file.
 
     Run:
-        python etl2.py
+        > python etl.py
 
     You should see:
-
-    Extracting data
-    Transforming customer data
-    Loading data
+        Extracting data
+        Transforming customer data
+        Loading data
 
 Part 30 – Commit Feature
 
     Run:
-
-    git status
-
-    Then:
-
-    git add .
+        > git status
 
     Then:
+        > git add .
 
-    git commit -m "Added customer transformation"
+    Then:
+        > git commit -m "Added customer transformation"
 
     Now push the branch:
-
-    git push -u origin feature-transform
+        > git push -u origin feature-transform
 
     Go to GitHub.
 
     You should now see the new branch.
 
 
+
+Why Branching is Important for Data Engineering
+
+    Imagine three developers:
+
+        Developer A
+            ↓
+        ETL development
+
+        Developer B
+            ↓
+        Airflow DAG
+
+        Developer C
+            ↓
+        SQL optimization
+
+    They can work on separate branches:
+        main
+        │
+        ├── feature-etl
+        ├── feature-airflow
+        └── feature-sql
+
+    This reduces the risk of developers directly changing production code.
+
+Part 32 – Return to Main
+    Run:
+        > git checkout main
+
+    Check:
+        > git branch
+
+    You should see:
+
+    feature-transform
+    * main
 
 
 
