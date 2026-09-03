@@ -753,6 +753,682 @@ Part 30 – Commit Feature
 
 
 
+Why Branching is Important for Data Engineering
+
+    Imagine three developers:
+
+        Developer A
+            ↓
+        ETL development
+
+        Developer B
+            ↓
+        Airflow DAG
+
+        Developer C
+            ↓
+        SQL optimization
+
+    They can work on separate branches:
+        main
+        │
+        ├── feature-etl
+        ├── feature-airflow
+        └── feature-sql
+
+    This reduces the risk of developers directly changing production code.
+
+Part 32 – Return to Main
+    Run:
+        > git checkout main
+
+    Check:
+        > git branch
+
+    You should see:
+        feature-transform
+        * main
+
+
+
+
+
+
+
+
+
+Now let's build CI
+    We are going to simulate CI locally first.
+    our CI process will do:
+
+Create Python Test
+    Create a folder: 
+        .github
+
+    Inside it Create
+        workflows
+    
+    Inside workflows, create:
+        python-ci.yml
+
+
+    Your structure should be:
+
+    myprjcicd/
+    │
+    ├── .github/
+    │   └── workflows/
+    │       └── python-ci.yml
+    │
+    ├── etl.py
+    ├── etl2.py
+    ├── test_etl.py
+    └── requirements.txt
+
+
+    etl.py
+        def transform(data):
+            print("Transforming data")
+            return [value * 2 for value in data]
+        
+    test_etl.py
+        from etl import transform
+
+        def test_transform():
+            data = [1, 2, 3]
+            result = transform(data)
+            assert result == [2, 4, 6]
+
+    Note: our ETL transformation multiplies each value by 2
+
+
+Install pytest
+
+    In terminal:
+        > python -m pip install pytest
+
+    Wait until installation finishes.
+    
+    Then verify:
+        > pytest --version
+
+Run Automated Test
+    Run:
+        > pytest
+
+    Expected:
+        1 passed  
+
+    you have now created an automated test.
+
+    Instead of manually checking:
+
+        Does transform() work?
+
+        pytest checks it automatically      
+
+Part - Create requirements.txt
+    Create another file:
+        requirements.txt
+
+    Put:
+        pytest
+
+    Save.        
+
+    Why ?
+        GitHub actions machine will be fresh environment.
+        it needs to know which python packages to install.
+
+        pip install -r requirements.txt
+
+        requirements.txt specifically to provide dependencies to the CI environment.
+
+
+Now create python-ci.yml
+
+For your local CI simulation, use:
+
+name: Python CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest        
+
+
+
+What this means
+    Your CI process will eventually do:
+        Developer pushes code
+                ↓
+        GitHub Actions starts
+                ↓
+        Download repository
+                ↓
+        Install Python
+                ↓
+        Install requirements
+                ↓
+        Run pytest
+                ↓
+        PASS / FAIL 
+
+It is a GitHub Actions workflow definition.
+
+    You are doing:
+
+    Step 1
+        Local Python
+            ↓
+        pytest
+            ↓
+        Verify test works
+
+    Step 2
+        GitHub
+            ↓
+        Push repository
+            ↓
+        GitHub Actions reads
+        .github/workflows/python-ci.yml
+            ↓
+        Runs the same test automatically
+
+Verify:
+    requirements.txt
+    .github
+    etl.py
+    etl2.py
+    test_etl.py
+
+
+    should exist
+
+
+Understand what each section does.
+
+    Workflow name
+    name: Python CI
+
+    Name of our pipeline.
+
+    Trigger
+    on:
+    push:
+        branches:
+        - main
+
+        || Meaning:
+        When code is pushed to main, start the workflow.
+
+    Pull request
+    pull_request:
+        branches:
+        - main
+
+        || Meaning:
+        Run CI when a Pull Request targets main.
+
+    Job
+    jobs:
+    test:
+
+        || We created a job called:
+    test
+    
+    Operating system
+    runs-on: ubuntu-latest
+
+        ||GitHub provides a temporary Ubuntu environment.
+        We don't need to install Ubuntu ourselves.
+
+    Checkout
+    uses: actions/checkout@v4
+
+        || Gets your repository code into the GitHub Actions machine.
+
+    Setup Python
+    uses: actions/setup-python@v5
+    and:
+    python-version: "3.11"
+
+        || GitHub prepares Python 3.11.
+
+    Install dependencies
+    pip install -r requirements.txt
+
+        || This installs:
+            pytest
+
+    Run tests
+    run: pytest
+
+        || GitHub runs your automated tests.
+
+    If they pass:
+        SUCCESS
+
+    If they fail:
+        FAILURE
+
+
+Merge to main Branch ?
+    Create GitHub account
+    Push
+
+    PART 29 — Commit Testing Work
+        Run:
+        > git status
+
+        Then:
+        > git add .
+
+        Then:
+        > git commit -m "Added automated ETL tests"
+    
+    PART 30 — Create GitHub Account
+        Open GitHub in your browser.
+
+        If you already have an account:
+
+        Sign in
+
+        If not:
+        Sign up
+
+        Complete the account creation and verification process.
+
+    PART 31 — Create GitHub Repository
+
+        After signing in:
+
+        Click:
+
+        +
+
+        Then:
+
+        New repository
+
+        Repository name:
+            session37-cicd
+
+        For this learning exercise choose:
+
+        Public
+        Important
+
+        Do not select:
+
+        Add a README
+
+        and do not initialize .gitignore at this point.
+
+        Why?
+
+        Because we already have a local Git repository.
+
+        Click:
+
+        Create repository
+    
+    PART 32 — Connect Local Project to GitHub
+
+        GitHub will show you commands.
+
+        We need the repository URL.
+
+        It will look approximately like:
+
+        https://github.com/YOUR_USERNAME/session37-cicd.git
+
+        In your VS Code terminal run:
+
+            git remote add origin https://github.com/YOUR_USERNAME/session37-cicd.git
+        
+        Replace YOUR_USERNAME
+
+        For example, if your GitHub username is:
+            vishal123
+
+        you would use:
+
+        git remote add origin https://github.com/vishal123/session37-cicd.git
+
+        Do not use that example unless it is actually your username.
+
+    PART 33 — Verify GitHub Connection
+
+        Run:
+
+        git remote -v
+
+        You should see something similar to:
+
+            origin  https://github.com/YOUR_USERNAME/session37-cicd.git (fetch)
+            origin  https://github.com/YOUR_USERNAME/session37-cicd.git (push)
+
+        Your repository is now connected to GitHub.
+
+    PART 34 — Merge Feature Branch
+
+        Check your branches:
+            git branch
+
+        If you see:
+
+            * feature-transform
+            main
+
+        switch to main:
+
+            > git checkout main
+
+        If your default branch is master, use: [ optional ]
+            > git checkout master
+
+            For the rest of this exercise, we'll assume your branch is:
+                main
+
+            Now merge:
+                > git merge feature-transform
+        
+    PART 35 — Push to GitHub
+
+        Run:
+            > git add .
+            > git commit -m "Update"
+            > git push -u origin main
+
+        GitHub may ask you to authenticate.
+
+        Complete the authentication process
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PART 40 — Commit GitHub Actions Workflow
+    Run:
+        git status
+
+    Then:
+        git add .
+
+    Then:
+        git commit -m "Added GitHub Actions CI pipeline"
+
+    Then:
+        git push
+
+PART 41 — Watch CI Run
+    Open your GitHub repository.
+
+    Click:
+        Actions
+
+    You should see:
+        Python CI
+        Click it.
+
+    You should see:
+        test
+        Click the job.
+
+    You should see steps such as:
+        Checkout code
+        Setup Python
+        Install dependencies
+        Run tests
+
+    Eventually:
+        ✓ Success
+
+    You have now created your first real CI pipeline.
+
+PART 42 — Demonstrate CI Failure
+    Now let's intentionally break production-quality code.
+
+    Open:
+        etl.py
+
+    Change:
+        return [value * 2 for value in data]
+
+    to:
+        return [value * 5 for value in data]
+
+    Save.
+    Commit
+    git add .
+
+    Then:
+        git commit -m "Introduce test failure"
+
+    Then:
+        git push
+
+PART 43 — Watch CI Fail
+
+Go to:
+
+GitHub
+   ↓
+Actions
+
+You should see the workflow fail.
+
+The test expects:
+
+[2, 4, 6]
+
+but the code generates:
+
+[5, 10, 15]
+
+The important flow is:
+
+Developer mistake
+       ↓
+Git push
+       ↓
+CI starts
+       ↓
+Test fails
+       ↓
+Pipeline fails
+       ↓
+Deployment should NOT happen
+
+This is the key purpose of CI.
+
+PART 44 — Fix CI Failure
+
+Change the code back:
+
+def transform(data):
+    print("Transforming data")
+    return [value * 2 for value in data]
+
+Save.
+
+Run locally first:
+
+pytest
+
+You must get:
+
+1 passed
+
+Now:
+
+git add .
+git commit -m "Fixed transformation logic"
+git push
+
+Go to:
+
+GitHub
+   ↓
+Actions
+
+You should eventually see:
+
+✓ Success
+PART 45 — Add Data Quality Test
+
+Now let's make this more Data Engineering specific.
+
+Open:
+
+test_etl.py
+
+Below the existing test, add:
+
+def test_data_not_empty():
+    data = [100, 200, 300]
+
+    assert len(data) > 0
+
+Your file becomes:
+
+from etl import transform
+
+
+def test_transform():
+    data = [1, 2, 3]
+
+    result = transform(data)
+
+    assert result == [2, 4, 6]
+
+
+def test_data_not_empty():
+    data = [100, 200, 300]
+
+    assert len(data) > 0
+
+Save.
+
+Run:
+
+pytest
+
+Expected:
+
+2 passed
+
+This is a basic data-quality test.
+
+PART 46 — Add Schema Test
+
+Below that, add:
+
+def test_required_columns():
+    columns = ["customer_id", "amount", "date"]
+
+    assert "customer_id" in columns
+    assert "amount" in columns
+    assert "date" in columns
+
+Now run:
+
+pytest
+
+Expected:
+
+3 passed
+
+We are simulating schema validation.
+
+In a real Data Engineering project, similar tests can validate:
+
+CSV schema
+Database schema
+DataFrame columns
+Parquet schema
+API response
+
+PART 47 — Commit Tests
+
+Run:
+
+git add .
+
+Then:
+
+git commit -m "Added data validation tests"
+
+Push:
+
+git push
+
+GitHub Actions should automatically run again.
+
+PART 48 — Now Understand CD
+
+So far we have:
+
+GitHub
+   ↓
+CI
+   ↓
+Tests
+   ↓
+PASS / FAIL
+
+Now we want:
+
+PASS
+ ↓
+Deployment
+
+That is where CD comes in.
+
+For this exercise, we will simulate deployment instead of deploying to a real production server.
+
+
+
+
 
 
 
