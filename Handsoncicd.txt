@@ -1053,10 +1053,10 @@ Merge to main Branch ?
 
         If you already have an account:
 
-        Sign in
+            Sign in
 
         If not:
-        Sign up
+            Sign up
 
         Complete the account creation and verification process.
 
@@ -1065,24 +1065,21 @@ Merge to main Branch ?
         After signing in:
 
         Click:
-
-        +
+            +
 
         Then:
-
-        New repository
+            New repository
 
         Repository name:
             session37-cicd
 
         For this learning exercise choose:
+            Public
 
-        Public
-        Important
+            Important
 
-        Do not select:
-
-        Add a README
+            Do not select:
+                Add a README
 
         and do not initialize .gitignore at this point.
 
@@ -1091,8 +1088,7 @@ Merge to main Branch ?
         Because we already have a local Git repository.
 
         Click:
-
-        Create repository
+            Create repository
     
     PART 32 — Connect Local Project to GitHub
 
@@ -1102,11 +1098,11 @@ Merge to main Branch ?
 
         It will look approximately like:
 
-        https://github.com/YOUR_USERNAME/session37-cicd.git
+            https://github.com/itnewcon/cicd26.git
 
         In your VS Code terminal run:
 
-            git remote add origin https://github.com/YOUR_USERNAME/session37-cicd.git
+            git remote add origin https://github.com/itnewcon/cicd26.git
         
         Replace YOUR_USERNAME
 
@@ -1115,7 +1111,7 @@ Merge to main Branch ?
 
         you would use:
 
-        git remote add origin https://github.com/vishal123/session37-cicd.git
+        git remote add origin https://github.com/itnewcon/cicd26.git
 
         Do not use that example unless it is actually your username.
 
@@ -1127,8 +1123,8 @@ Merge to main Branch ?
 
         You should see something similar to:
 
-            origin  https://github.com/YOUR_USERNAME/session37-cicd.git (fetch)
-            origin  https://github.com/YOUR_USERNAME/session37-cicd.git (push)
+            origin  https://github.com/itnewcon/cicd26.git (fetch)
+            origin  https://github.com/itnewcon/cicd26.git (push)
 
         Your repository is now connected to GitHub.
 
@@ -1143,7 +1139,6 @@ Merge to main Branch ?
             main
 
         switch to main:
-
             > git checkout main
 
         If your default branch is master, use: [ optional ]
